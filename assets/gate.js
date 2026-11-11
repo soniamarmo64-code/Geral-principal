@@ -31,7 +31,7 @@
   const smile = (y, cx = 60) => `<path d="M${cx - 5} ${y} q5 5 10 0" fill="none" stroke="${DARK}" stroke-width="2" stroke-linecap="round"/>`;
   const shadow = `<ellipse cx="60" cy="137" rx="38" ry="4" fill="#000" opacity=".08"/>`;
 
-  const bear = (c = "#c99a72", l = "#efd9c2") => [
+  const bear = (c = "#b9783f", l = "#f5d7b0") => [
     shadow,
     st("circle", { cx: 30, cy: 30, r: 13, fill: c }), st("circle", { cx: 90, cy: 30, r: 13, fill: c }),
     `<circle cx="30" cy="30" r="6" fill="${l}"/><circle cx="90" cy="30" r="6" fill="${l}"/>`,
@@ -47,7 +47,7 @@
     eyes(52), cheeks(64, 24),
   ].join("");
 
-  const bunny = (c = "#fbeef0", inner = "#f4b9c7") => [
+  const bunny = (c = "#ffffff", inner = "#ff7aa8") => [
     shadow,
     st("ellipse", { cx: 45, cy: 30, rx: 10, ry: 27, fill: c, transform: "rotate(-10 45 30)" }),
     st("ellipse", { cx: 75, cy: 30, rx: 10, ry: 27, fill: c, transform: "rotate(10 75 30)" }),
@@ -59,11 +59,11 @@
     st("ellipse", { cx: 44, cy: 131, rx: 11, ry: 7, fill: c }), st("ellipse", { cx: 76, cy: 131, rx: 11, ry: 7, fill: c }),
     st("circle", { cx: 60, cy: 64, r: 31, fill: c }),
     // laço
-    `<path d="M60 40 l-14 -8 v16 z M60 40 l14 -8 v16 z" fill="#e8798f"/><circle cx="60" cy="40" r="4" fill="#d9607a"/>`,
+    `<path d="M60 40 l-14 -8 v16 z M60 40 l14 -8 v16 z" fill="#ff3d7f"/><circle cx="60" cy="40" r="4" fill="#d81b60"/>`,
     `<path d="M57 70 h6 l-3 3.5 z" fill="#e8798f"/>`, smile(75), eyes(63, 12), cheeks(72, 20),
   ].join("");
 
-  const cat = (c = "#f4b47c", d = "#e08f55", l = "#fde7d2") => [
+  const cat = (c = "#ff9a3c", d = "#e86a10", l = "#ffe3c4") => [
     shadow,
     `<path d="M86 118 q30 -6 22 -34" fill="none" stroke="${c}" stroke-width="10" stroke-linecap="round"/>`,
     `<path d="M86 118 q30 -6 22 -34" fill="none" stroke="url(#st)" stroke-width="10" stroke-linecap="round"/>`,
@@ -81,7 +81,7 @@
     eyes(57, 14), cheeks(68, 22),
   ].join("");
 
-  const octopus = (c = "#c9b6ea") => {
+  const octopus = (c = "#a77bff") => {
     const legs = [
       "M34 92 q-10 22 4 36 q8 6 10 -3",
       "M50 96 q-4 24 -10 34",
@@ -101,7 +101,7 @@
     ].join("");
   };
 
-  const chick = (c = "#f8d76b", o = "#f29b4b") => [
+  const chick = (c = "#ffd23f", o = "#ff7a2f") => [
     shadow,
     `<path d="M48 130 v6 M44 136 h8 M72 130 v6 M68 136 h8" stroke="${o}" stroke-width="3.2" stroke-linecap="round"/>`,
     st("path", { d: "M60 22 q-6 -12 -14 -8 q8 2 6 10 q2 -12 10 -12 q-4 6 -2 10", fill: c, transform: "translate(0 20)" }),
@@ -112,14 +112,14 @@
     eyes(66, 14), cheeks(78, 24),
   ].join("");
 
-  const yarn = (c = "#e8798f") => [
+  const yarn = (c = "#ff4f8b") => [
     `<ellipse cx="60" cy="137" rx="30" ry="4" fill="#000" opacity=".08"/>`,
     `<path d="M88 120 q20 10 30 -4" fill="none" stroke="${c}" stroke-width="3" stroke-linecap="round"/>`,
     `<circle cx="60" cy="104" r="32" fill="${c}"/>`,
     `<path d="M32 92 q28 -16 56 0 M30 106 q30 -18 60 0 M34 120 q26 -14 52 -2 M48 74 q-16 30 0 60 M66 72 q-20 34 4 62 M80 80 q-14 26 2 48"
       fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="2.2" stroke-linecap="round"/>`,
     // agulha de crochê
-    `<g transform="rotate(-35 60 104)"><rect x="57" y="40" width="6" height="96" rx="3" fill="#a8c7e8"/><path d="M57 42 q3 -8 6 0" fill="#a8c7e8"/></g>`,
+    `<g transform="rotate(-35 60 104)"><rect x="57" y="40" width="6" height="96" rx="3" fill="#2ec4b6"/><path d="M57 42 q3 -8 6 0" fill="#2ec4b6"/></g>`,
   ].join("");
 
   const svg = (inner, label) =>
@@ -172,6 +172,12 @@
   };
   const savedKeys = () => { try { return JSON.parse(ls.get(KEYS) || "{}"); } catch (_) { return {}; } };
   const catMeta = Object.fromEntries(enc.categories.map((c) => [c.id, c]));
+  const VIVID = {
+    natal: "#ff4d4d", pascoa: "#ffc93c", halloween: "#ff8c1a", bonecas: "#ff5fa2", personagens: "#4d8bff",
+    coelhos: "#ff85b3", ursos: "#c47a3d", gatos: "#ff9f43", cachorros: "#b5835a", fazenda: "#5cc96b",
+    selva: "#f5b700", floresta: "#ff7043", mar: "#1ec8d6", fantasia: "#a86bff", bebe: "#5ab4ff",
+    acessorios: "#d65cff", casa: "#2ec4a0", comidinhas: "#ff5c7a", veiculos: "#5c7cff", revistas: "#8d6e63", outros: "#ff6f91",
+  };
   const total = enc.total || enc.categories.reduce((n, c) => n + c.n, 0);
 
   async function decryptBox(key, box) {
@@ -238,7 +244,7 @@
     grid.innerHTML = enc.categories.map((c) => {
       const open = !!unlocked[c.id];
       return `
-        <article class="cat-card ${open ? "is-open" : ""}" style="--c:${c.color}">
+        <article class="cat-card ${open ? "is-open" : ""}" style="--c:${VIVID[c.id] || c.color}">
           <div class="cat-card__bubble" aria-hidden="true">${c.emoji}</div>
           <h3 class="cat-card__name">${esc(c.name)}</h3>
           <p class="cat-card__n">${c.n.toLocaleString("pt-BR")} ${c.n === 1 ? "receita" : "receitas"}</p>
