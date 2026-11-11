@@ -144,7 +144,7 @@
   }
 
   // ---------- Contato para pedir acesso ----------
-  const WHATSAPP = "5515996252688";
+  const WHATSAPP = "5515996353688";
   const EMAIL = "cantinhodereceitasamigurumi@gmail.com";
   const waLink = (txt) => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(txt)}`;
   const mailLink = (subj, body) => `mailto:${EMAIL}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`;
