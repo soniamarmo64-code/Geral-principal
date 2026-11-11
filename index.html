@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Cantinho do Amigurumi</title>
+  <meta name="description" content="Todas as minhas receitas de crochê e amigurumi em um só lugar.">
+  <meta name="theme-color" content="#f7efe6">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧶</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <a class="skip" href="#grid">Pular para as receitas</a>
+
+  <header class="brandbar">
+    <div class="wrap top__row">
+      <a class="brand" href="#" id="home-link" aria-label="Início">
+        <span class="brand__ball" aria-hidden="true">🧶</span>
+        <span>
+          <span class="brand__name">Cantinho do Amigurumi</span>
+          <span class="brand__sub" id="total-count">receitas de crochê</span>
+        </span>
+      </a>
+      <button class="btn btn--ghost" id="random-btn" type="button" title="Abrir uma receita aleatória">
+        <span aria-hidden="true">🎲</span><span class="hide-sm"> Me surpreenda</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="top">
+    <div class="wrap">
+      <label class="search">
+        <span class="search__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="20" height="20"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="m20 20-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </span>
+        <input id="search" type="search" autocomplete="off" enterkeyhint="search"
+               placeholder="Buscar receita… ex.: coelho, boneca, urso panda">
+        <button class="search__clear" id="search-clear" type="button" aria-label="Limpar busca" hidden>✕</button>
+      </label>
+    </div>
+
+    <nav class="wrap tabs" aria-label="Listas">
+      <button class="tab is-active" data-tab="all" type="button">Todas</button>
+      <button class="tab" data-tab="fav" type="button">❤️ Favoritas <span class="tab__n" id="n-fav"></span></button>
+      <button class="tab" data-tab="done" type="button">✅ Já fiz <span class="tab__n" id="n-done"></span></button>
+      <button class="tab" data-tab="recent" type="button">🕘 Vistas <span class="tab__n" id="n-recent"></span></button>
+    </nav>
+
+    <div class="chips-wrap">
+      <div class="wrap chips" id="chips" role="list" aria-label="Categorias"></div>
+    </div>
+  </div>
+
+  <main class="wrap">
+    <div class="toolbar">
+      <p class="toolbar__count" id="result-count" aria-live="polite"></p>
+      <div class="toolbar__filters">
+        <label class="select">
+          <span class="sr-only">Idioma</span>
+          <select id="lang">
+            <option value="">Todos os idiomas</option>
+          </select>
+        </label>
+        <label class="select">
+          <span class="sr-only">Ordenar</span>
+          <select id="sort">
+            <option value="az">A → Z</option>
+            <option value="za">Z → A</option>
+            <option value="new">Mais recentes</option>
+            <option value="old">Mais antigas</option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <section id="grid" class="grid" aria-label="Receitas"></section>
+    <div id="empty" class="empty" hidden></div>
+    <div id="sentinel" class="sentinel" aria-hidden="true"></div>
+  </main>
+
+  <footer class="foot wrap">
+    <p>Feito com 🧶 e carinho · as receitas ficam guardadas no Google Drive</p>
+    <p class="foot__small" id="generated"></p>
+  </footer>
+
+  <!-- Página da receita -->
+  <div class="sheet" id="sheet" hidden>
+    <div class="sheet__backdrop" data-close></div>
+    <article class="sheet__panel" role="dialog" aria-modal="true" aria-labelledby="d-title">
+      <header class="sheet__head">
+        <button class="icon-btn" data-close type="button" aria-label="Voltar">
+          <svg viewBox="0 0 24 24" width="22" height="22"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="sheet__titles">
+          <h2 id="d-title"></h2>
+          <p id="d-original" class="muted"></p>
+        </div>
+        <button class="icon-btn fav-toggle" id="d-fav" type="button" aria-pressed="false" aria-label="Favoritar">♡</button>
+      </header>
+
+      <div class="sheet__body">
+        <div class="viewer">
+          <iframe id="d-frame" title="Receita em PDF" allow="autoplay" loading="lazy"></iframe>
+          <div class="viewer__hint" id="d-hint">
+            <p>Carregando a receita…<br>Se não aparecer, toque em <strong>Abrir no Drive</strong>.</p>
+          </div>
+        </div>
+
+        <aside class="side">
+          <div class="side__tags" id="d-tags"></div>
+
+          <div class="actions">
+            <a class="btn btn--primary" id="d-open" target="_blank" rel="noopener">📖 Abrir no Drive</a>
+            <a class="btn" id="d-download" target="_blank" rel="noopener">⬇️ Baixar</a>
+            <button class="btn" id="d-done" type="button" aria-pressed="false">✅ Já fiz</button>
+          </div>
+
+          <section class="card-box">
+            <h3>🔢 Contador de carreiras</h3>
+            <div class="counter">
+              <button class="counter__btn" id="c-minus" type="button" aria-label="Diminuir">−</button>
+              <output id="c-value" aria-live="polite">0</output>
+              <button class="counter__btn counter__btn--plus" id="c-plus" type="button" aria-label="Aumentar">+</button>
+            </div>
+            <button class="link-btn" id="c-reset" type="button">zerar</button>
+          </section>
+
+          <section class="card-box">
+            <h3>📝 Minhas anotações</h3>
+            <textarea id="d-notes" rows="4" placeholder="Ex.: usei agulha 2,5 mm e linha Amigurumi Círculo cor 3526…"></textarea>
+            <p class="muted small" id="d-notes-status">Salvo automaticamente neste aparelho.</p>
+          </section>
+
+          <dl class="meta" id="d-meta"></dl>
+        </aside>
+      </div>
+    </article>
+  </div>
+
+  <script src="assets/recipes.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
