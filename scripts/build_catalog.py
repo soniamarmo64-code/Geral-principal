@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
-"""Gera assets/recipes.js a partir de data/drive_files.json.
+"""Gera data/catalog.json (privado) a partir de data/drive_files.json.
 
 Uso:  python3 scripts/build_catalog.py
+      CATALOG_PASSWORD="senha" node scripts/encrypt_catalog.mjs
+
+O segundo comando criptografa o catálogo em assets/catalog.enc.js, que é o
+único arquivo de receitas publicado no site. A pasta data/ não vai para o
+GitHub (.gitignore), para que os nomes e links das receitas não fiquem expostos.
 
 data/drive_files.json é a listagem da pasta do Google Drive
 (id, title, mimeType, size, created, folder). Este script:
@@ -17,7 +22,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "data" / "drive_files.json"
-OUT = ROOT / "assets" / "recipes.js"
+OUT = ROOT / "data" / "catalog.json"
 
 RECIPE_MIMES = {
     "application/pdf",
@@ -292,11 +297,7 @@ def main() -> None:
 
     payload = {"generated": __import__("datetime").date.today().isoformat(),
                "categories": cats, "recipes": recipes}
-    OUT.write_text(
-        "/* Gerado por scripts/build_catalog.py — não edite à mão. */\n"
-        "window.CATALOG = " + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + ";\n",
-        encoding="utf-8",
-    )
+    OUT.write_text(json.dumps(payload, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 
     from collections import Counter
     cc = Counter(c for r in recipes for c in r["c"])

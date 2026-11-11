@@ -1,8 +1,9 @@
 /* Cantinho do Amigurumi — lógica do site (sem dependências) */
-(function () {
+// Chamado por gate.js depois que a senha descriptografa o catálogo.
+window.startCatalog = function (CATALOG) {
   "use strict";
 
-  const { categories, recipes, generated } = window.CATALOG;
+  const { categories, recipes, generated } = CATALOG;
   const PAGE = 48;
   const catById = Object.fromEntries(categories.map((c) => [c.id, c]));
   const byId = new Map(recipes.map((r) => [r.id, r]));
@@ -429,4 +430,4 @@
   renderTabCounts();
   applyFilters();
   route();
-})();
+};

@@ -1,7 +1,7 @@
 # 🧶 Cantinho do Amigurumi
 
-Site que reúne em um só lugar as **3.913 receitas de crochê e amigurumi** da pasta
-"Amigurumis variados" do Google Drive (incluindo as subpastas "Bolsas de crochê" e "Gurumiland").
+Site particular que reúne receitas de crochê e amigurumi guardadas no Google Drive.
+A página de abertura é pública; **as receitas só aparecem para quem tem a senha**.
 
 ## O que o site faz
 
@@ -49,6 +49,15 @@ Só a dona dos arquivos consegue configurar isso:
 Assim, quem tem acesso só como leitor consegue **ver** o PDF, mas não baixar nem imprimir.
 Você, como dona, continua podendo baixar normalmente.
 
+## Senha e privacidade
+
+- A lista de receitas (nomes e links do Drive) fica **criptografada** em `assets/catalog.enc.js`.
+  Sem a senha, ninguém consegue ler esse arquivo — nem olhando o código do site.
+- A listagem original (`data/`) **não vai para o GitHub** (está no `.gitignore`).
+- Para **trocar a senha**, rode de novo o passo 3 abaixo com a senha nova. Quem tinha
+  marcado "Lembrar neste aparelho" vai precisar digitar a senha nova.
+- Os PDFs continuam protegidos pelo compartilhamento do Google Drive: só abre quem tem acesso à pasta.
+
 ## Como atualizar quando entrarem receitas novas
 
 1. Atualize `data/drive_files.json` com a listagem nova da pasta. Peça ao Claude: *"atualize o catálogo do site com as receitas novas do Drive"*.
@@ -56,8 +65,12 @@ Você, como dona, continua podendo baixar normalmente.
    ```bash
    python3 scripts/build_catalog.py
    ```
-   Isso gera de novo o `assets/recipes.js`: limpa os nomes, tira duplicados e separa em categorias.
-3. Para mudar ou criar categorias, edite a lista `CATEGORIES` em `scripts/build_catalog.py`.
+   Isso gera `data/catalog.json` (privado): limpa os nomes, tira duplicados e separa em categorias.
+3. Criptografe o catálogo com a senha:
+   ```bash
+   CATALOG_PASSWORD="a senha" node scripts/encrypt_catalog.mjs
+   ```
+4. Para mudar ou criar categorias, edite a lista `CATEGORIES` em `scripts/build_catalog.py`.
    Cada categoria tem nome, emoji, cor e as palavras-chave que a identificam.
 
 ## Arquivos
@@ -67,6 +80,7 @@ Você, como dona, continua podendo baixar normalmente.
 | `index.html` | A página do site |
 | `assets/styles.css` | Cores, fontes e layout |
 | `assets/app.js` | Busca, filtros, favoritas, contador… |
-| `assets/recipes.js` | Catálogo de receitas (gerado automaticamente) |
-| `data/drive_files.json` | Listagem dos arquivos do Drive |
-| `scripts/build_catalog.py` | Gera o catálogo a partir da listagem |
+| `assets/gate.js` | Página de abertura (ilustrações) e senha |
+| `assets/catalog.enc.js` | Catálogo de receitas criptografado |
+| `scripts/build_catalog.py` | Gera o catálogo a partir da listagem do Drive |
+| `scripts/encrypt_catalog.mjs` | Criptografa o catálogo com a senha |

@@ -4,7 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Cantinho do Amigurumi</title>
-  <meta name="description" content="Todas as minhas receitas de crochê e amigurumi em um só lugar.">
+  <meta name="description" content="Um cantinho aconchegante de receitas de crochê e amigurumi.">
+  <meta name="robots" content="noindex, nofollow">
   <meta name="theme-color" content="#f7efe6">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧶</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,6 +14,30 @@
   <link rel="stylesheet" href="assets/styles.css">
 </head>
 <body>
+  <!-- Página de abertura (pública) -->
+  <section class="landing" id="landing">
+    <div class="landing__inner wrap">
+      <div class="landing__text">
+        <span class="landing__kicker">🧶 feito à mão, ponto a ponto</span>
+        <h1 class="landing__title">Cantinho do <em>Amigurumi</em></h1>
+        <p class="landing__lead">Um cantinho aconchegante de receitas de crochê: bichinhos, bonecas e muitos mimos feitos com carinho.</p>
+
+        <form class="gate" id="gate" autocomplete="on">
+          <label class="gate__label" for="gate-pw">Senha de acesso</label>
+          <div class="gate__row">
+            <input id="gate-pw" name="password" type="password" autocomplete="current-password" required placeholder="Digite a senha">
+            <button class="btn btn--primary" type="submit" id="gate-btn">Entrar</button>
+          </div>
+          <label class="gate__remember"><input type="checkbox" id="gate-remember" checked> Lembrar neste aparelho</label>
+          <p class="gate__msg" id="gate-msg" role="alert"></p>
+        </form>
+        <p class="landing__small">🔒 Acesso restrito. Peça a senha à dona do cantinho.</p>
+      </div>
+      <div class="landing__art" id="landing-art" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <div id="app" hidden>
   <a class="skip" href="#grid">Pular para as receitas</a>
 
   <header class="brandbar">
@@ -26,6 +51,9 @@
       </a>
       <button class="btn btn--ghost" id="random-btn" type="button" title="Abrir uma receita aleatória">
         <span aria-hidden="true">🎲</span><span class="hide-sm"> Me surpreenda</span>
+      </button>
+      <button class="btn btn--ghost" id="logout-btn" type="button" title="Sair e trancar o cantinho">
+        <span aria-hidden="true">🔒</span><span class="hide-sm"> Sair</span>
       </button>
     </div>
   </header>
@@ -86,6 +114,8 @@
     <p class="foot__small" id="generated"></p>
   </footer>
 
+  </div><!-- /#app -->
+
   <!-- Página da receita -->
   <div class="sheet" id="sheet" hidden>
     <div class="sheet__backdrop" data-close></div>
@@ -139,7 +169,8 @@
     </article>
   </div>
 
-  <script src="assets/recipes.js"></script>
+  <script src="assets/catalog.enc.js"></script>
   <script src="assets/app.js"></script>
+  <script src="assets/gate.js"></script>
 </body>
 </html>
