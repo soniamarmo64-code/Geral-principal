@@ -8,7 +8,7 @@ Site que reúne em um só lugar as **3.913 receitas de crochê e amigurumi** da 
 - **Busca** por nome. Não precisa de acento e aceita várias palavras: "urso panda", "coelha vestido".
 - **20 categorias**, como Bonecas, Coelhos, Ursos, Natal, Personagens famosos, Fundo do mar, Para bebês e Casa e decoração.
 - **Filtro por idioma** (Português, Inglês, Russo, Espanhol…) e **ordem** A→Z, Z→A, mais recentes ou mais antigas.
-- **Página de cada receita** com o PDF aberto dentro do site e botões para abrir no Drive ou baixar.
+- **Página de cada receita** com o PDF aberto dentro do site e botão de tela cheia. O site **não tem botão de baixar**: as receitas são só para visualizar.
 - **❤️ Favoritas**, **✅ Já fiz** e **🕘 Vistas recentemente**.
 - **🔢 Contador de carreiras** e **📝 anotações** para cada receita (ex.: "usei agulha 2,5").
 - **🎲 Me surpreenda**: abre uma receita aleatória.
@@ -34,6 +34,20 @@ O site mostra a receita direto do Google Drive. Por isso:
 - **Outras pessoas** só conseguem abrir as receitas se a pasta estiver compartilhada como
   *"Qualquer pessoa com o link pode ver"* (no Drive: botão direito na pasta → Compartilhar → Acesso geral).
 - Quando a miniatura não carrega, o card mostra um desenho da categoria (🐰, 🧸, 🎄…).
+
+## Bloquear o download das receitas
+
+O site não oferece download, mas o bloqueio de verdade é feito no Google Drive.
+Só a dona dos arquivos consegue configurar isso:
+
+1. No Google Drive da sua conta pessoal (a dona da pasta), abra a pasta "Amigurumis variados".
+2. Selecione todos os arquivos (Ctrl+A no computador).
+3. Clique em **Compartilhar** → ícone de engrenagem ⚙️.
+4. **Desmarque** "Leitores e comentaristas podem ver a opção de fazer download, imprimir e copiar".
+5. Salve.
+
+Assim, quem tem acesso só como leitor consegue **ver** o PDF, mas não baixar nem imprimir.
+Você, como dona, continua podendo baixar normalmente.
 
 ## Como atualizar quando entrarem receitas novas
 

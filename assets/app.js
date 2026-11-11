@@ -34,7 +34,6 @@
   const drive = {
     view: (id) => `https://drive.google.com/file/d/${id}/view`,
     preview: (id) => `https://drive.google.com/file/d/${id}/preview`,
-    download: (id) => `https://drive.google.com/uc?export=download&id=${id}`,
     thumb: (id) => `https://drive.google.com/thumbnail?id=${id}&sz=w400`,
   };
 
@@ -310,7 +309,6 @@
         .join("") + (r.l !== "Português" ? `<span class="tag tag--lang">${esc(r.l)}</span>` : "");
 
     $("#d-open").href = drive.view(r.id);
-    $("#d-download").href = drive.download(r.id);
     $("#d-hint").hidden = false;
     frame.src = drive.preview(r.id);
 
