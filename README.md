@@ -1,7 +1,7 @@
 # 🧶 Cantinho do Amigurumi
 
 Site particular que reúne receitas de crochê e amigurumi guardadas no Google Drive.
-A página de abertura é pública; **as receitas só aparecem para quem tem a senha**.
+A página de abertura é pública; **as receitas só aparecem para quem tem o código do tema**.
 
 ## O que o site faz
 
