@@ -143,8 +143,15 @@
       <div class="ami ami--6">${svg(yarn(), "Novelo de lã")}</div>`;
   }
 
-  // ---------- Senha ----------
-  const KEY = "cantinho:key";
+  // ---------- Contato para pedir acesso ----------
+  const WHATSAPP = "5515996252688";
+  const EMAIL = "soniamarmo64@gmail.com";
+  const waLink = (txt) => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(txt)}`;
+  const mailLink = (subj, body) => `mailto:${EMAIL}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`;
+  const askText = (name) => `Oi! Vi o Cantinho do Amigurumi e gostaria de acesso à categoria "${name}". 🧶`;
+
+  // ---------- Códigos por categoria ----------
+  const KEYS = "cantinho:keys";
   const enc = window.CATALOG_ENC;
   const landing = document.getElementById("landing");
   const app = document.getElementById("app");
@@ -152,78 +159,174 @@
   const pw = document.getElementById("gate-pw");
   const btn = document.getElementById("gate-btn");
   const msg = document.getElementById("gate-msg");
-  const remember = document.getElementById("gate-remember");
+  const grid = document.getElementById("cat-grid");
+  const mine = document.getElementById("mine");
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const b64d = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
   const b64e = (u) => btoa(String.fromCharCode(...new Uint8Array(u)));
+  const normCode = (s) => s.toUpperCase().replace(/[^A-Z0-9]/g, "");
   const ls = {
     get: (k) => { try { return localStorage.getItem(k); } catch (_) { return null; } },
     set: (k, v) => { try { localStorage.setItem(k, v); } catch (_) { /* modo privado */ } },
     del: (k) => { try { localStorage.removeItem(k); } catch (_) { /* modo privado */ } },
   };
+  const savedKeys = () => { try { return JSON.parse(ls.get(KEYS) || "{}"); } catch (_) { return {}; } };
+  const catMeta = Object.fromEntries(enc.categories.map((c) => [c.id, c]));
+  const total = enc.total || enc.categories.reduce((n, c) => n + c.n, 0);
 
-  async function decryptWith(key) {
-    const buf = await crypto.subtle.decrypt({ name: "AES-GCM", iv: b64d(enc.iv) }, key, b64d(enc.data));
-    return JSON.parse(new TextDecoder().decode(buf));
+  async function decryptBox(key, box) {
+    return new Uint8Array(await crypto.subtle.decrypt({ name: "AES-GCM", iv: b64d(box.iv) }, key, b64d(box.d)));
   }
-  async function deriveKey(password) {
-    const base = await crypto.subtle.importKey(
-      "raw", new TextEncoder().encode(password.normalize("NFC")), "PBKDF2", false, ["deriveKey"]);
-    return crypto.subtle.deriveKey(
+  const importRaw = (raw) => crypto.subtle.importKey("raw", raw, "AES-GCM", false, ["decrypt"]);
+
+  // Testa o código digitado contra todas as categorias e devolve as chaves liberadas
+  async function unlock(code) {
+    const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(normCode(code)), "PBKDF2", false, ["deriveKey"]);
+    const k = await crypto.subtle.deriveKey(
       { name: "PBKDF2", salt: b64d(enc.salt), iterations: enc.iter, hash: "SHA-256" },
-      base, { name: "AES-GCM", length: 256 }, true, ["decrypt"]);
+      base, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+    const found = {};
+    for (const [cat, wraps] of Object.entries(enc.wraps)) {
+      for (const w of wraps) {
+        try { found[cat] = b64e(await decryptBox(k, w)); break; } catch (_) { /* não é deste */ }
+      }
+    }
+    return found;
+  }
+
+  // Abre as categorias liberadas e junta as receitas (sem repetir)
+  async function loadCatalog(keys) {
+    const ok = {};
+    const byId = new Map();
+    for (const [cat, raw] of Object.entries(keys)) {
+      if (!enc.blobs[cat]) continue;
+      try {
+        const list = JSON.parse(new TextDecoder().decode(await decryptBox(await importRaw(b64d(raw)), enc.blobs[cat])));
+        ok[cat] = raw;
+        for (const r of list) if (!byId.has(r.id)) byId.set(r.id, r);
+      } catch (_) { /* chave antiga (código trocado) */ }
+    }
+    const allowed = new Set(Object.keys(ok));
+    const recipes = [...byId.values()]
+      .map((r) => ({ ...r, c: r.c.filter((c) => allowed.has(c)) }))
+      .sort((a, b) => a.t.localeCompare(b.t, "pt-BR"));
+    return { ok, catalog: { generated: enc.generated, categories: enc.categories.filter((c) => allowed.has(c.id)), recipes } };
   }
 
   let started = false;
-  function enter(catalog) {
+  let unlocked = {};
+  function showApp() {
     landing.hidden = true;
     app.hidden = false;
+    window.scrollTo({ top: 0 });
+  }
+  function showLanding() {
+    app.hidden = true;
+    landing.hidden = false;
+    window.scrollTo({ top: 0 });
+  }
+
+  function renderLanding() {
+    const has = Object.keys(unlocked);
+    document.getElementById("total-public").textContent = total.toLocaleString("pt-BR");
+    mine.hidden = !has.length;
+    if (has.length) {
+      document.getElementById("mine-text").textContent =
+        `Você já tem ${has.length === 1 ? "1 tema liberado" : has.length + " temas liberados"}: ` +
+        has.map((c) => catMeta[c] ? `${catMeta[c].emoji} ${catMeta[c].name}` : "").filter(Boolean).join(", ");
+    }
+    grid.innerHTML = enc.categories.map((c) => {
+      const open = !!unlocked[c.id];
+      return `
+        <article class="cat-card ${open ? "is-open" : ""}" style="--c:${c.color}">
+          <div class="cat-card__bubble" aria-hidden="true">${c.emoji}</div>
+          <h3 class="cat-card__name">${esc(c.name)}</h3>
+          <p class="cat-card__n">${c.n.toLocaleString("pt-BR")} ${c.n === 1 ? "receita" : "receitas"}</p>
+          ${open
+            ? `<button class="btn btn--done" type="button" data-open-app>✓ Liberado · ver receitas</button>`
+            : `<a class="btn btn--wa" href="${waLink(askText(c.name))}" target="_blank" rel="noopener">💬 Quero acesso</a>
+               <a class="cat-card__mail" href="${mailLink("Acesso: " + c.name, askText(c.name))}">ou pedir por e-mail</a>`}
+        </article>`;
+    }).join("");
+  }
+
+  async function start(keys) {
+    const { ok, catalog } = await loadCatalog(keys);
+    unlocked = ok;
+    ls.set(KEYS, JSON.stringify(ok));
+    renderLanding();
+    if (!catalog.recipes.length) return false;
     if (!started) {
       started = true;
       window.startCatalog(catalog);
     }
+    return true;
   }
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     msg.textContent = "";
+    msg.classList.remove("is-ok");
     if (!window.crypto?.subtle) {
       msg.textContent = "Este navegador não consegue abrir o cantinho. Tente pelo Chrome ou Safari atualizados.";
       return;
     }
+    if (normCode(pw.value).length < 6) {
+      msg.textContent = "Digite o código completo que você recebeu.";
+      return;
+    }
     btn.disabled = true;
-    btn.textContent = "Abrindo…";
+    btn.textContent = "Liberando…";
     try {
-      const key = await deriveKey(pw.value.trim());
-      const catalog = await decryptWith(key);
-      if (remember.checked) ls.set(KEY, b64e(await crypto.subtle.exportKey("raw", key)));
+      const found = await unlock(pw.value);
+      const cats = Object.keys(found);
+      if (!cats.length) throw new Error("código inválido");
+      const fresh = cats.filter((c) => !unlocked[c]);
+      const merged = { ...unlocked, ...found };
       pw.value = "";
-      enter(catalog);
+      if (started) {
+        // novas categorias: recarrega para montar a lista completa
+        ls.set(KEYS, JSON.stringify(merged));
+        location.replace(location.pathname + location.search);
+        return;
+      }
+      await start(merged);
+      msg.classList.add("is-ok");
+      msg.textContent = fresh.length
+        ? `🎉 Liberado: ${fresh.map((c) => catMeta[c]?.name).join(", ")}!`
+        : "Esse tema já estava liberado.";
+      setTimeout(showApp, 900);
     } catch (_) {
-      msg.textContent = "Senha incorreta. Confira e tente de novo.";
+      msg.textContent = "Código não reconhecido. Confira as letras e tente de novo.";
       form.classList.remove("shake");
       void form.offsetWidth;
       form.classList.add("shake");
       pw.select();
     } finally {
       btn.disabled = false;
-      btn.textContent = "Entrar";
+      btn.textContent = "Liberar";
     }
   });
 
+  document.addEventListener("click", (e) => {
+    if (e.target.closest("[data-open-app]") && started) showApp();
+  });
+  document.getElementById("more-btn").addEventListener("click", showLanding);
   document.getElementById("logout-btn").addEventListener("click", () => {
-    ls.del(KEY);
+    if (!confirm("Sair e esquecer os códigos neste aparelho? Para voltar, será preciso digitá-los de novo.")) return;
+    ls.del(KEYS);
+    ls.del("cantinho:key");
     location.replace(location.pathname + location.search);
   });
+  document.getElementById("general-wa").href = waLink("Oi! Vi o Cantinho do Amigurumi e gostaria de saber mais sobre as receitas. 🧶");
+  document.getElementById("general-mail").href = mailLink("Cantinho do Amigurumi", "Oi! Gostaria de saber mais sobre as receitas.");
 
-  // Entrada automática se a senha foi lembrada neste aparelho
+  // Início: abre direto se o aparelho já tem códigos guardados
+  renderLanding();
+  ls.del("cantinho:key"); // formato antigo (senha única)
   (async () => {
-    const saved = ls.get(KEY);
-    if (!saved || !window.crypto?.subtle) return;
-    try {
-      const key = await crypto.subtle.importKey("raw", b64d(saved), "AES-GCM", false, ["decrypt"]);
-      enter(await decryptWith(key));
-    } catch (_) {
-      ls.del(KEY); // catálogo foi atualizado com outra senha
-    }
+    const keys = savedKeys();
+    if (!Object.keys(keys).length || !window.crypto?.subtle) return;
+    if (await start(keys)) showApp();
   })();
 })();

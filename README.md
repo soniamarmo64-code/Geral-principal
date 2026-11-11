@@ -49,14 +49,23 @@ Só a dona dos arquivos consegue configurar isso:
 Assim, quem tem acesso só como leitor consegue **ver** o PDF, mas não baixar nem imprimir.
 Você, como dona, continua podendo baixar normalmente.
 
-## Senha e privacidade
+## Códigos de acesso por tema
 
-- A lista de receitas (nomes e links do Drive) fica **criptografada** em `assets/catalog.enc.js`.
-  Sem a senha, ninguém consegue ler esse arquivo — nem olhando o código do site.
-- A listagem original (`data/`) **não vai para o GitHub** (está no `.gitignore`).
-- Para **trocar a senha**, rode de novo o passo 3 abaixo com a senha nova. Quem tinha
-  marcado "Lembrar neste aparelho" vai precisar digitar a senha nova.
-- Os PDFs continuam protegidos pelo compartilhamento do Google Drive: só abre quem tem acesso à pasta.
+- A página de abertura mostra os temas (categorias) com a quantidade de receitas e um botão
+  **Quero acesso**, que abre o WhatsApp ou o e-mail com a mensagem pronta.
+- **Cada tema tem o seu código** (ex.: `NATAL-XXXX-XXXX`). Quem digita o código vê só as receitas daquele tema.
+  Vários códigos podem ser somados no mesmo aparelho.
+- O **código mestre** (`MESTRE-…`) abre todos os temas.
+- As receitas de cada tema ficam **criptografadas com a chave daquele tema** em `assets/catalog.enc.js`.
+  Sem o código, ninguém consegue ler os nomes nem os links — nem olhando o código do site.
+- Os códigos ficam guardados em `secrets.enc.json`, criptografado com o código mestre.
+  A lista legível é gerada em `data/codigos.txt`, que **não vai para o GitHub**.
+- **Trocar o código de um tema** (por exemplo, se ele vazou):
+  ```bash
+  MASTER_CODE="MESTRE-…" node scripts/encrypt_catalog.mjs --rotate natal
+  ```
+  O código antigo deixa de funcionar; os outros temas continuam iguais.
+- Os PDFs continuam protegidos pelo compartilhamento do Google Drive.
 
 ## Como atualizar quando entrarem receitas novas
 
@@ -66,9 +75,9 @@ Você, como dona, continua podendo baixar normalmente.
    python3 scripts/build_catalog.py
    ```
    Isso gera `data/catalog.json` (privado): limpa os nomes, tira duplicados e separa em categorias.
-3. Criptografe o catálogo com a senha:
+3. Criptografe o catálogo (mantém os mesmos códigos):
    ```bash
-   CATALOG_PASSWORD="a senha" node scripts/encrypt_catalog.mjs
+   MASTER_CODE="MESTRE-…" node scripts/encrypt_catalog.mjs
    ```
 4. Para mudar ou criar categorias, edite a lista `CATEGORIES` em `scripts/build_catalog.py`.
    Cada categoria tem nome, emoji, cor e as palavras-chave que a identificam.
@@ -80,7 +89,8 @@ Você, como dona, continua podendo baixar normalmente.
 | `index.html` | A página do site |
 | `assets/styles.css` | Cores, fontes e layout |
 | `assets/app.js` | Busca, filtros, favoritas, contador… |
-| `assets/gate.js` | Página de abertura (ilustrações) e senha |
-| `assets/catalog.enc.js` | Catálogo de receitas criptografado |
+| `assets/gate.js` | Página de abertura (ilustrações, temas, pedir acesso) e códigos |
+| `assets/catalog.enc.js` | Catálogo de receitas criptografado por tema |
+| `secrets.enc.json` | Códigos dos temas, criptografados com o código mestre |
 | `scripts/build_catalog.py` | Gera o catálogo a partir da listagem do Drive |
-| `scripts/encrypt_catalog.mjs` | Criptografa o catálogo com a senha |
+| `scripts/encrypt_catalog.mjs` | Gera/mantém os códigos e criptografa cada tema |
