@@ -24,7 +24,7 @@ A página de abertura é pública; **as receitas só aparecem para quem tem o c�
 **Publicar na internet de graça (GitHub Pages):**
 1. No GitHub, abra o repositório → **Settings** → **Pages**.
 2. Em *Branch*, escolha o branch do site e a pasta `/ (root)` → **Save**.
-3. Em 1 ou 2 minutos o endereço aparece ali mesmo, algo como `https://SEU-USUARIO.github.io/Geral-principal/`.
+3. Em 1 ou 2 minutos o site fica no ar em **https://cantinhodereceitasamigurumi.github.io**.
 
 ## Fotos e PDFs: quem consegue ver
 
